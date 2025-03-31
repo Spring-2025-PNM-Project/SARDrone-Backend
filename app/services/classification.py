@@ -22,7 +22,8 @@ class ClassificationModel:
             
             print(response.text)
             return response.text
-        except:
+        except Exception as e:
+            print(e)
             print("An exception has occured with generating response")
 
     if __name__ == "__main__":

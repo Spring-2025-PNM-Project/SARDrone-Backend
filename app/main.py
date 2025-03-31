@@ -1,9 +1,12 @@
 from fastapi import FastAPI, File, UploadFile
-from classification import ClassificationModel
-import uvicorn
+
+from app.routers import drone
+from app.services.classification import ClassificationModel
 
 
 app = FastAPI()
+
+app.include_router(drone.router)
 
 classificationmodel = ClassificationModel()
 
@@ -21,5 +24,7 @@ async def process_image(file: UploadFile = File(...)):
     except Exception as e:
         return {"message": e.args}
 
+
 if __name__ == "__main__":
-    uvicorn.run("main:app", port=8000, log_level="info", reload=True)
+    import uvicorn
+    uvicorn.run("app.main:app", port=8000, log_level="info", reload=True)
