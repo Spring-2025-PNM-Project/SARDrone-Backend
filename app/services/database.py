@@ -1,16 +1,24 @@
+import os
+
 from pymongo import MongoClient
 from dotenv import load_dotenv
-import os
 
 load_dotenv()
 
+client = MongoClient(os.getenv("MONGODB_URL"))
+db = client["Backend"]
+
+
+def init_database():
+    logs = db["logs"]
+    logs.create_index([("drone_id", 1), ("timestamp", -1)])
+
+    users = db["users"]
+    users.create_index("username", unique=True)
+
 def get_database():
-    try:
-        client = MongoClient(os.getenv("CONNECTION_STRING"))
-        print(client)
-        return client
-    except:
-        print("Error connecting to DB")
+    return db
+
 
 if __name__=="__main__":
-    get_database()
+    init_database()
