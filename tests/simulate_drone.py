@@ -11,7 +11,6 @@ from app.main import app
 
 drone_id = "1"
 drone_status = {
-    "drone_id": drone_id,
     "location": {"latitude": 1, "longitude": 1, "altitude": 5},
     "timestamp": 0,
     "status": "online"
@@ -27,10 +26,11 @@ async def simulate_drone():
         i += 1
         drone_status["timestamp"] = i
 
-        response = requests.post("http://localhost:8001/drone/status", json=drone_status).json()
+        response = requests.post(f"http://localhost:8001/drone/{drone_id}/status", json=drone_status).json()
         print(f"[Drone] Sent Data: {json.dumps(drone_status)}")
 
         # if instructions are present, print them
+        print(response)
         for instruction in response["instructions"]:
             print(f"[Drone] Recieved Instruction: {instruction}")
 
@@ -53,7 +53,7 @@ async def simulate_frontend():
     # (WIP)
     # response = requests.get(f"http://localhost:8001/drone/{drone_id}/status")
 
-    websocket_url = f"ws://localhost:8001/drone/ws/{drone_id}"
+    websocket_url = f"ws://localhost:8001/drone/{drone_id}/ws"
 
     async with websockets.connect(websocket_url) as websocket:
         # Simulate sending a takeoff command
