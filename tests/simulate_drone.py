@@ -1,4 +1,5 @@
 import asyncio
+import base64
 import json
 import requests
 import threading
@@ -11,7 +12,6 @@ from app.main import app
 
 drone_id = "1"
 drone_status = {
-    "drone_id": drone_id,
     "location": {"latitude": 1, "longitude": 1, "altitude": 5},
     "timestamp": 0,
     "status": "online"
@@ -25,9 +25,9 @@ async def simulate_drone():
 
     while 1:
         i += 1
-        drone_status["timestamp"] = i
+        drone_status["timestamp"] = int(time.time())
 
-        response = requests.post("http://localhost:8001/drone/status", json=drone_status).json()
+        response = requests.post(f"http://localhost:8001/drone/{drone_id}/status", json=drone_status).json()
         print(f"[Drone] Sent Data: {json.dumps(drone_status)}")
 
         # if instructions are present, print them
@@ -36,7 +36,9 @@ async def simulate_drone():
 
             if instruction == "takeoff":
                 drone_status["status"] = "flying"
-                drone_status["image"] = "image_data"
+                fake_bytes = b"Hello, drone!"
+                encoded = base64.b64encode(fake_bytes).decode("utf-8")
+                drone_status["image"] = encoded
                 drone_status["text"] = "There is a human"
                 drone_status["humanDetected"] = True
             elif instruction == "shutdown":
@@ -53,7 +55,7 @@ async def simulate_frontend():
     # (WIP)
     # response = requests.get(f"http://localhost:8001/drone/{drone_id}/status")
 
-    websocket_url = f"ws://localhost:8001/drone/ws/{drone_id}"
+    websocket_url = f"ws://localhost:8001/drone/{drone_id}/ws"
 
     async with websockets.connect(websocket_url) as websocket:
         # Simulate sending a takeoff command

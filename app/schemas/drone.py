@@ -8,11 +8,10 @@ class Location(BaseModel):
     altitude: float
 
 class DroneStatus(BaseModel):
-    drone_id: str
     location: Location
     timestamp: int
     status: str
-    image: Optional[str] = None
+    image: Optional[bytes] = None
     text: Optional[str] = None
     humanDetected: Optional[bool] = None
 
