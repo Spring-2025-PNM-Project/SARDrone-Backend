@@ -12,6 +12,8 @@ class DroneStatus(BaseModel):
     timestamp: int
     status: str
     image: Optional[bytes] = None
+
+class ProcessedDroneStatus(DroneStatus):
     text: Optional[str] = None
     score: Optional[int] = None
     bounding_boxes: Optional[List[List[int]]] = None
