@@ -49,4 +49,16 @@ async def update_drone_status(status: DroneStatus, background_tasks: BackgroundT
 
     return {"instructions": drone_instructions}
  
- #@router.get("/{drone_id}/status")
+@router.get("/{drone_id}/status")
+async def get_drone_status(drone_id: str):
+        logs = list(
+            db["logs"]
+            .find({"drone_id": drone_id})
+            .sort("timestamp", -1)  
+            .limit(100)
+        )
+        
+        for log in logs:
+            log["_id"] = str(log["_id"])  
+
+        return logs
