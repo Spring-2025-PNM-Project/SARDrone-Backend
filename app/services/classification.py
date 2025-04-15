@@ -26,8 +26,8 @@ Bounding boxes must follow this exact format: [ymin, xmin, ymax, xmax] with inte
 
 JSON Response Format:
 {
-  "text_description": "Brief summary of the scene and any humans detected.",
-  "confidence_score": integer from 1 to 100 indicating confidence a human is present,
+  "text": "Brief summary of the scene and any humans detected.",
+  "score": integer from 1 to 100 indicating confidence a human is present,
   "bounding_boxes": [
     [ymin, xmin, ymax, xmax],
     ...
@@ -44,14 +44,15 @@ class ClassificationModel:
     client = genai.Client(api_key=GEMINI_API_KEY)
 
     @staticmethod
-    def generate(image_bytes: bytes):
+    async def generate(image_bytes: bytes):
         try:
             image = PIL.Image.open(BytesIO(image_bytes))
 
-            response = ClassificationModel.client.models.generate_content(
+            response = await ClassificationModel.client.aio.models.generate_content(
                 model = GEMINI_MODEL,
                 contents = [image, PROMPT]
-            ).text
+            )
+            response = response.text
             
             lines = response.splitlines()
             for i, line in enumerate(lines):

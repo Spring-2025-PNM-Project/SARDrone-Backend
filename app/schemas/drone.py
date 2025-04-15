@@ -13,7 +13,8 @@ class DroneStatus(BaseModel):
     status: str
     image: Optional[bytes] = None
     text: Optional[str] = None
-    humanDetected: Optional[bool] = None
+    score: Optional[int] = None
+    bounding_boxes: Optional[List[List[int]]] = None
 
 class DroneStatusResponse(BaseModel):
     instructions: List[str]
