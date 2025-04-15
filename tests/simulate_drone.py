@@ -25,7 +25,7 @@ async def simulate_drone():
 
     while 1:
         i += 1
-        drone_status["timestamp"] = i
+        drone_status["timestamp"] = int(time.time())
 
         response = requests.post(f"http://localhost:8001/drone/{drone_id}/status", json=drone_status).json()
         print(f"[Drone] Sent Data: {json.dumps(drone_status)}")

@@ -4,6 +4,7 @@ from app.schemas.drone import DroneStatus, DroneStatusResponse
 from app.services.database import get_database
 from collections import defaultdict, deque
 from datetime import datetime, timezone
+from bson import Binary
 
 router = APIRouter(
     prefix="/drone",
@@ -20,6 +21,10 @@ async def save_drone_status(drone_id, status: dict):
     try:
         status["timestamp"] = datetime.fromtimestamp(status["timestamp"], tz=timezone.utc)
         status["drone_id"] = drone_id
+
+        if "image" in status:
+            status["image"] = Binary(status["image"])
+            
         db["logs"].insert_one(status)
         
     except Exception as e:
