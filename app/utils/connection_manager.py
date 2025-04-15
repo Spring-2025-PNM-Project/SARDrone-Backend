@@ -1,3 +1,4 @@
+import base64
 from fastapi import WebSocket
 from collections import defaultdict
 
@@ -17,6 +18,9 @@ class ConnectionManager:
                 del self.active_connections[drone_id]
 
     async def send_drone_status(self, drone_id: str, data: dict):
+        if isinstance(data.get("image"), bytes):
+            data["image"] = base64.b64encode(data["image"]).decode("utf-8")
+
         connections = self.active_connections.get(drone_id, [])
         for websocket in connections:
             try:

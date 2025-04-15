@@ -28,7 +28,10 @@ async def simulate_drone():
         drone_status["timestamp"] = int(time.time())
 
         response = requests.post(f"http://localhost:8001/drone/{drone_id}/status", json=drone_status).json()
-        print(f"[Drone] Sent Data: {json.dumps(drone_status)}")
+        status_for_logging = drone_status.copy()
+        if "image" in status_for_logging:
+            status_for_logging["image"] = status_for_logging["image"][:10]
+        print(f"[Drone] Sent Data: {status_for_logging}")
 
         # if instructions are present, print them
         for instruction in response["instructions"]:
@@ -36,37 +39,36 @@ async def simulate_drone():
 
             if instruction == "takeoff":
                 drone_status["status"] = "flying"
-                fake_bytes = b"Hello, drone!"
-                encoded = base64.b64encode(fake_bytes).decode("utf-8")
-                drone_status["image"] = encoded
-                drone_status["text"] = "There is a human"
-                drone_status["humanDetected"] = True
+
+                file_path = "tests/images/droneimage1.jpg"
+                with open(file_path, "rb") as f:
+                    image_bytes = f.read()
+                    encoded_image = base64.b64encode(image_bytes).decode("utf-8")
+                drone_status["image"] = encoded_image
             elif instruction == "shutdown":
                 drone_status["status"] = "shutdown"
                 del drone_status["image"]
-                del drone_status["text"]
-                del drone_status["humanDetected"]
 
         await asyncio.sleep(1)
     
 # Frontend behavior simulation
 async def simulate_frontend():
     # Initially fetch any existing drone staus messages
-    # (WIP)
-    # response = requests.get(f"http://localhost:8001/drone/{drone_id}/status")
+    response = requests.get(f"http://localhost:8001/drone/{drone_id}/status")
+    print(f"[Frontend] Initial Data: {len(response.json())} messages received")
 
     websocket_url = f"ws://localhost:8001/drone/{drone_id}/ws"
 
     async with websockets.connect(websocket_url) as websocket:
         # Simulate sending a takeoff command
         async def send_takeoff():
-            await asyncio.sleep(6)
+            await asyncio.sleep(1)
             await websocket.send("takeoff")
             print("[Frontend] Sent: takeoff")
         
         # Simulate sending a shutdown command
         async def send_shutdown():
-            await asyncio.sleep(12)
+            await asyncio.sleep(18)
             await websocket.send("shutdown")
             print("[Frontend] Sent: shutdown")
 
@@ -76,6 +78,9 @@ async def simulate_frontend():
         # Recieve new status messages from backend
         while True:
             message = await websocket.recv()
+            message = json.loads(message)
+            if "image" in message:
+                message["image"] = message["image"][:10]
             print(f"[Frontend] Received: {message}")
 
 def start_fastapi():
