@@ -8,7 +8,6 @@ class Location(BaseModel):
     altitude: float
 
 class DroneStatus(BaseModel):
-    drone_id: str
     location: Location
     timestamp: int
     status: str

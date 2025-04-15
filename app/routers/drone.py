@@ -16,9 +16,10 @@ instructions = defaultdict(deque)
 
 db = get_database()
 
-async def save_drone_status(status: dict):
+async def save_drone_status(drone_id, status: dict):
     try:
         status["timestamp"] = datetime.fromtimestamp(status["timestamp"], tz=timezone.utc)
+        status["drone_id"] = drone_id
         db["logs"].insert_one(status)
         
     except Exception as e:
@@ -35,10 +36,10 @@ async def websocket_endpoint(websocket: WebSocket, drone_id: str):
     except WebSocketDisconnect:
         manager.disconnect(drone_id, websocket)
 
-@router.post("/status", response_model=DroneStatusResponse)
-async def update_drone_status(status: DroneStatus, background_tasks: BackgroundTasks):
-    background_tasks.add_task(manager.send_drone_status, status.drone_id, status.model_dump(exclude_none=True))
-    background_tasks.add_task(save_drone_status, status.model_dump(exclude_none=True))
+@router.post("/drone/{drone_id}/status", response_model=DroneStatusResponse)
+async def update_drone_status(status: DroneStatus, background_tasks: BackgroundTasks, drone_id: str):
+    background_tasks.add_task(manager.send_drone_status, drone_id, status.model_dump(exclude_none=True))
+    background_tasks.add_task(save_drone_status, drone_id, status.model_dump(exclude_none=True))
 
     drone_instructions = []
     instructions_queue = instructions[status.drone_id]
@@ -48,3 +49,4 @@ async def update_drone_status(status: DroneStatus, background_tasks: BackgroundT
 
     return {"instructions": drone_instructions}
  
+ #@router.get("/drone/{drone_id}/status")
