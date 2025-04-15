@@ -1,6 +1,6 @@
 from fastapi import APIRouter, WebSocket, WebSocketDisconnect, BackgroundTasks
 from app.utils.connection_manager import ConnectionManager
-from app.schemas.drone import DroneStatus, DroneStatusResponse
+from app.schemas.drone import DroneStatus, DroneStatusResponse, ProcessedDroneStatus
 from app.services.database import get_database
 from collections import defaultdict, deque
 from datetime import datetime, timezone
@@ -53,9 +53,13 @@ async def update_drone_status(status: DroneStatus, background_tasks: BackgroundT
     if status.image:
         image_bytes = base64.b64decode(status.image)
         result = await classificationmodel.generate(image_bytes)
-        status.text = result["text"]
-        status.score = result["score"]
-        status.bounding_boxes = result["bounding_boxes"]
+
+        status = ProcessedDroneStatus(
+            **status.model_dump(),
+            text=result["text"],
+            score=result["score"],
+            bounding_boxes=result["bounding_boxes"]
+        )
     
     background_tasks.add_task(manager.send_drone_status, drone_id, status.model_dump(exclude_none=True))
     background_tasks.add_task(save_drone_status, drone_id, status.model_dump(exclude_none=True))
@@ -68,7 +72,7 @@ async def update_drone_status(status: DroneStatus, background_tasks: BackgroundT
 
     return {"instructions": drone_instructions}
  
-@router.get("/{drone_id}/status", response_model=List[DroneStatus])
+@router.get("/{drone_id}/status", response_model=List[ProcessedDroneStatus])
 async def get_drone_status(drone_id: str):
     documents = list(
         db["logs"]
