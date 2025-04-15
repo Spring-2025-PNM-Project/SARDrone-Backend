@@ -1,4 +1,5 @@
 import asyncio
+import base64
 import json
 import requests
 import threading
@@ -30,13 +31,14 @@ async def simulate_drone():
         print(f"[Drone] Sent Data: {json.dumps(drone_status)}")
 
         # if instructions are present, print them
-        print(response)
         for instruction in response["instructions"]:
             print(f"[Drone] Recieved Instruction: {instruction}")
 
             if instruction == "takeoff":
                 drone_status["status"] = "flying"
-                drone_status["image"] = "image_data"
+                fake_bytes = b"Hello, drone!"
+                encoded = base64.b64encode(fake_bytes).decode("utf-8")
+                drone_status["image"] = encoded
                 drone_status["text"] = "There is a human"
                 drone_status["humanDetected"] = True
             elif instruction == "shutdown":

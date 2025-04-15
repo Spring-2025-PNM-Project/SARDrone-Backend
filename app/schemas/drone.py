@@ -11,7 +11,7 @@ class DroneStatus(BaseModel):
     location: Location
     timestamp: int
     status: str
-    image: Optional[str] = None
+    image: Optional[bytes] = None
     text: Optional[str] = None
     humanDetected: Optional[bool] = None
 
