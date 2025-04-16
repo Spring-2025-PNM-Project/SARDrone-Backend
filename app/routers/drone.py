@@ -48,7 +48,7 @@ async def websocket_endpoint(websocket: WebSocket, drone_id: str):
     except WebSocketDisconnect:
         manager.disconnect(drone_id, websocket)
 
-@router.post("/{drone_id}/status", response_model=DroneStatusResponse)
+@router.post("/{drone_id}/info", response_model=DroneStatusResponse)
 async def update_drone_status(status: DroneStatus, background_tasks: BackgroundTasks, drone_id: str):
     if status.image:
         image_bytes = base64.b64decode(status.image)
@@ -72,7 +72,7 @@ async def update_drone_status(status: DroneStatus, background_tasks: BackgroundT
 
     return {"instructions": drone_instructions}
  
-@router.get("/{drone_id}/status", response_model=List[ProcessedDroneStatus])
+@router.get("/{drone_id}/info", response_model=List[ProcessedDroneStatus])
 async def get_drone_status(drone_id: str):
     documents = list(
         db["logs"]

@@ -27,7 +27,7 @@ async def simulate_drone():
         i += 1
         drone_status["timestamp"] = int(time.time())
 
-        response = requests.post(f"http://localhost:8001/drone/{drone_id}/status", json=drone_status).json()
+        response = requests.post(f"http://localhost:8001/drone/{drone_id}/info", json=drone_status).json()
         status_for_logging = drone_status.copy()
         if "image" in status_for_logging:
             status_for_logging["image"] = status_for_logging["image"][:10]
@@ -54,7 +54,7 @@ async def simulate_drone():
 # Frontend behavior simulation
 async def simulate_frontend():
     # Initially fetch any existing drone staus messages
-    response = requests.get(f"http://localhost:8001/drone/{drone_id}/status")
+    response = requests.get(f"http://localhost:8001/drone/{drone_id}/info")
     print(f"[Frontend] Initial Data: {len(response.json())} messages received")
 
     websocket_url = f"ws://localhost:8001/drone/{drone_id}/ws"

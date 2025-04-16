@@ -8,4 +8,4 @@ client = TestClient(app)
 def test_tha_status():
     response = client.get("/")
     assert response.status_code == 200
-    assert response.json() == {"Hello": "World"}
+    assert response.json() == {"status": "ok"}
