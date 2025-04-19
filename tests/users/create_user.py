@@ -1,3 +1,5 @@
+import asyncio
+
 from app.services.database import get_database
 from app.schemas.user import User
 from bcrypt import hashpw, gensalt
@@ -12,7 +14,7 @@ WRITE_DRONES = []
 db = get_database()
 
 
-def create_user():
+async def create_user():
     hashed_password = hashpw(PASSWORD.encode('utf-8'), gensalt())
 
     user = User(
@@ -23,10 +25,10 @@ def create_user():
     )
 
     try:
-        db["users"].insert_one(user.model_dump())
+        await db["users"].insert_one(user.model_dump())
         print("User created successfully!")
     except Exception as e:
         print("Error creating user:", e)
 
 if __name__ == "__main__":
-    create_user()
+    asyncio.run(create_user())

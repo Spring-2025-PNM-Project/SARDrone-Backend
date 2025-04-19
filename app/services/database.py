@@ -1,11 +1,11 @@
 import os
 
-from pymongo import MongoClient
+from pymongo import AsyncMongoClient
 from dotenv import load_dotenv
 
 load_dotenv()
 
-client = MongoClient(os.getenv("MONGODB_URL"))
+client = AsyncMongoClient(os.getenv("MONGODB_URL"))
 db = client["Backend"]
 
 def init_database():

@@ -32,7 +32,7 @@ async def save_drone_status(drone_id, status: dict):
         if "image" in status:
             status["image"] = Binary(status["image"])
 
-        db["logs"].insert_one(status)
+        await db["logs"].insert_one(status)
         
     except Exception as e:
         print("Error saving drone status:", e)
@@ -74,11 +74,9 @@ async def update_drone_status(status: DroneStatus, background_tasks: BackgroundT
  
 @router.get("/{drone_id}/info", response_model=List[ProcessedDroneStatus])
 async def get_drone_status(drone_id: str):
+    results = await db["logs"].find({"drone_id": drone_id}).sort("timestamp", -1).limit(100).to_list(length=100)
     documents = list(
-        db["logs"]
-        .find({"drone_id": drone_id})
-        .sort("timestamp", -1)  
-        .limit(100)
+        results
     )
     
     for document in documents:
