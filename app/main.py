@@ -1,7 +1,6 @@
-from fastapi import FastAPI, File, UploadFile
-
+from fastapi import FastAPI
+from fastapi.middleware.cors import CORSMiddleware
 from app.routers import drone, login
-from app.services.classification import ClassificationModel
 
 
 app = FastAPI()
@@ -9,7 +8,13 @@ app = FastAPI()
 app.include_router(drone.router)
 app.include_router(login.router)
 
-classificationmodel = ClassificationModel()
+app.add_middleware(
+    CORSMiddleware,
+    allow_origins=["*"],  # allow all domains
+    allow_credentials=True,
+    allow_methods=["*"],  # allow all HTTP methods (GET, POST, etc.)
+    allow_headers=["*"],  # allow all headers
+)
 
 
 @app.get('/')
