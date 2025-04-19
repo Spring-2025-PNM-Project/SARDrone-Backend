@@ -13,3 +13,8 @@ class User(UserLogin):
 class LoginResponse(BaseModel):
     status: Literal["success"]
     token: str
+
+class UserResponse(BaseModel):
+    username: str
+    read_drones: List[str]
+    write_drones: List[str]

@@ -34,6 +34,7 @@ async def simulate_drone():
         print(f"[Drone] Sent Data: {status_for_logging}")
 
         # if instructions are present, print them
+        response["instructions"]=["takeoff"]
         for instruction in response["instructions"]:
             print(f"[Drone] Recieved Instruction: {instruction}")
 
@@ -89,7 +90,7 @@ def start_fastapi():
 async def start_tasks():
     tasks = [
         simulate_drone(),
-        simulate_frontend(),
+        #simulate_frontend(),
     ]
     await asyncio.gather(*tasks)
 
