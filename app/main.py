@@ -1,12 +1,13 @@
 from fastapi import FastAPI, File, UploadFile
 
-from app.routers import drone
+from app.routers import drone, login
 from app.services.classification import ClassificationModel
 
 
 app = FastAPI()
 
 app.include_router(drone.router)
+app.include_router(login.router)
 
 classificationmodel = ClassificationModel()
 
