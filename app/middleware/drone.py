@@ -4,6 +4,7 @@ from datetime import datetime, timezone
 from typing import Optional
 import os
 from dotenv import load_dotenv
+from jwt import ExpiredSignatureError, PyJWTError
 
 
 load_dotenv()
@@ -44,8 +45,9 @@ def verify_token(require_drone: bool = False, access_type: str = "read"):
                     )
 
             return user_info
-
-        except jwt.PyJWTError as e:
-            raise HTTPException(status_code=401, detail=f"Invalid token")
+        except ExpiredSignatureError:
+            raise HTTPException(status_code=401, detail="Token has expired")
+        except PyJWTError:
+            raise HTTPException(status_code=401, detail="Invalid token")
 
     return _verify
