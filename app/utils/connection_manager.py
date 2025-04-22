@@ -19,7 +19,7 @@ class ConnectionManager:
 
     async def send_drone_status(self, drone_id: str, data: dict):
         if isinstance(data.get("image"), bytes):
-            data["image"] = base64.b64encode(data["image"]).decode("utf-8")
+            data["image"] = data["image"].decode("utf-8")
 
         connections = self.active_connections.get(drone_id, [])
         for websocket in connections:
