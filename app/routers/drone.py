@@ -82,6 +82,8 @@ async def websocket_endpoint(websocket: WebSocket, drone_id: str):
         while True:
             instruction = await websocket.receive_text()
 
+            print(f"Received instruction from {drone_id}: {instruction}")
+
             if can_write:
                 instructions[drone_id].append(instruction)
     except WebSocketDisconnect:
