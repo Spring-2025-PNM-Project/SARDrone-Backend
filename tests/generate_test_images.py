@@ -8,12 +8,14 @@ import uuid
 
 
 
-FOLDER_NAME = "images/no_human"
+FOLDER_NAME = "images/yes_human"
 NUM_TO_GENERATE = 25
-PROMPT = """Generate a drone view of a deserted natural area with a human being able to be seen, 
-to test a SAR drone. """
+
 
 PROMPT = """Generate a drone view of a deserted natural area with no human, to test a SAR drone. """
+
+PROMPT = """Generate a drone view of a deserted natural area with a human being able to be seen, 
+to test a SAR drone. """
 
 
 load_dotenv()
