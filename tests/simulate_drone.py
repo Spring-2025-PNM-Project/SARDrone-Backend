@@ -12,7 +12,7 @@ from app.main import app
 
 drone_id = "1"
 drone_status = {
-    "location": {"latitude": 1, "longitude": 1, "altitude": 5},
+    "location": {"latitude": 37.3352, "longitude": -121.8811, "altitude": 5},
     "timestamp": 0,
     "status": "online"
 }
