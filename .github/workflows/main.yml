@@ -11,6 +11,7 @@ jobs:
     env:
       MONGODB_URL: ${{ secrets.MONGODB_URL }}
       GEMINI_API_KEY: ${{ secrets.GEMINI_API_KEY }}
+      SECRET_KEY: ${{ secrets.SECRET_KEY }}
 
     steps:
     - name: Checkout code
