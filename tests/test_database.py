@@ -1,5 +1,5 @@
 from app.services.database import get_database, init_database
-
+import asyncio
 
 def test_get_db():
     db = get_database()
@@ -8,4 +8,4 @@ def test_get_db():
 
 def test_init_db():
     get_database()
-    init_database()
+    asyncio.run(init_database())
