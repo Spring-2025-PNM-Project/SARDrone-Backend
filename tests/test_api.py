@@ -15,6 +15,23 @@ def test_login_failure():
     assert response.status_code == 401
     assert "access_token" not in response.json()
 
+
+def test_login_success():
+    response = client.post("/login", json={"username": "testuser", "password": "password"})
+    assert response.status_code == 200
+    assert "token" in response.json()
+
+def test_status_requires_read_access():
+    login_response = client.post("/login", json={"username": "testuser", "password": "password"})
+    assert login_response.status_code == 200
+    assert "token" in login_response.json()
+    token = login_response.json()["token"]
+
+    headers = {"Authorization": f"Bearer {token}"}
+    response = client.get("/drone/1/info", headers=headers)
+    assert response.status_code == 403
+
+
 def test_status_requires_auth():
     response = client.get("/drone/1/info")
     assert response.status_code == 401
