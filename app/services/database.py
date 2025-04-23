@@ -11,7 +11,7 @@ db = client["Backend"]
 def init_database():
     logs = db["logs"]
     logs.create_index([("drone_id", 1), ("timestamp", -1)])
-    db["logs"].create_index("timestamp", expireAfterSeconds = 600) 
+#   db["logs"].create_index("timestamp", expireAfterSeconds = 600) 
 
     users = db["users"]
     users.create_index("username", unique=True)
